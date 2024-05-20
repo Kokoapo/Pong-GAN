@@ -7,8 +7,8 @@ def main():
     c_copia = 20
     t_batch = 32
 
-    p1 = DeepQNetwork((6,), 3)
-    p2 = DeepQNetwork((6,), 3)
+    p1 = DeepQNetwork((1,), 3)
+    p2 = DeepQNetwork((1,), 3)
     env = Pong(800, 600)
 
     for ep in range(n_episodios):
@@ -37,15 +37,17 @@ def main():
             p1.memorizar(estado, acao_p1, recompensa_p1, proximo_estado, fim)
             p2.memorizar(estado, acao_p2, recompensa_p2, proximo_estado, fim)
             estado = proximo_estado
-        p1.replay(t_batch)
-        p2.replay(t_batch)
+        mse_p1 = p1.replay(t_batch)
+        mse_p2 = p2.replay(t_batch)
 
         if ep % c_save == 0:
-            p1.save("modelo_p1")
-            p2.save("modelo_p2")
+            p1.save("modelo_p1.weights.h5")
+            p2.save("modelo_p2.weights.h5")
         if ep % c_copia == 0:
             p1.update_alvo()
             p2.update_alvo()
+
+        print("Episodio {}: P1 = {} P2 = {}".format(ep, mse_p1, mse_p2))
         
 
 if __name__ == "__main__":

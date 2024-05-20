@@ -24,11 +24,11 @@ class DeepQNetwork:
         modelo.add(keras.layers.InputLayer(shape=self.n_entradas))
         modelo.add(keras.layers.Dense(512, activation='relu'))
         modelo.add(keras.layers.Dense(self.n_saidas, activation='linear'))
-        modelo.compile(loss='mse', optimizer=tf.keras.optimizers.Adam())
+        modelo.compile(loss='mse', optimizer=tf.keras.optimizers.Adam(), metrics=['mse'])
         return modelo
 
     def update_alvo(self):
-        self.modelo_alvo.set_weights(self.main.get_weights())
+        self.modelo_alvo.set_weights(self.modelo_main.get_weights())
 
     def memorizar(self, estado_atual, acao, recompensa, proximo_estado, fim):
         self.memoria.append((estado_atual, acao, recompensa, proximo_estado, fim))
@@ -36,21 +36,23 @@ class DeepQNetwork:
     def agir(self, estado):
         if np.random.rand() <= self.epsilon:
             return random.randrange(self.n_saidas)
-        q_values = self.modelo_main.predict(estado)
-        return np.argmax(q_values[0])
+        q_values = self.modelo_main.predict(estado, verbose=0)
+        return np.argmax(q_values[0])-1
 
     def replay(self, t_batch):
         minibatch = random.sample(self.memoria, t_batch)
+        history = None
         for estado_atual, acao, recompensa, proximo_estado, fim in minibatch:
-            q_values = self.modelo_main.predict(estado_atual)
+            q_values = self.modelo_main.predict(estado_atual, verbose=0)
             if fim:
                 q_values[0][acao] = recompensa
             else:
-                t = self.modelo_alvo.predict(proximo_estado)[0]
+                t = self.modelo_alvo.predict(proximo_estado, verbose=0)[0]
                 q_values[0][acao] = recompensa + self.gamma * np.amax(t)
-            self.modelo_main.fit(estado_atual, q_values, epochs=1, verbose=0)
+            history = self.modelo_main.fit(estado_atual, q_values, epochs=1, verbose=0)
             if self.epsilon > self.epsilon_min:
                 self.epsilon *= self.epsilon_decay
+        return history.history['mse']
 
     def load(self, name):
         self.modelo_main.load_weights(name)
