@@ -41,7 +41,8 @@ class DeepQNetwork:
 
     def replay(self, t_batch):
         minibatch = random.sample(self.memoria, t_batch)
-        history = None
+        maior_loss = -9999.99
+        menor_loss = 99999.99
         for estado_atual, acao, recompensa, proximo_estado, fim in minibatch:
             q_values = self.modelo_main.predict(estado_atual, verbose=0)
             if fim:
@@ -50,9 +51,15 @@ class DeepQNetwork:
                 t = self.modelo_alvo.predict(proximo_estado, verbose=0)[0]
                 q_values[0][acao] = recompensa + self.gamma * np.amax(t)
             history = self.modelo_main.fit(estado_atual, q_values, epochs=1, verbose=0)
+
+            if history.history['mse'][0] > maior_loss:
+                maior_loss = history.history['mse'][0]
+            elif history.history['mse'][0] < menor_loss:
+                menor_loss = history.history['mse'][0]
+
             if self.epsilon > self.epsilon_min:
                 self.epsilon *= self.epsilon_decay
-        return history.history['mse']
+        return menor_loss, maior_loss
 
     def load(self, name):
         self.modelo_main.load_weights(name)

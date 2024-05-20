@@ -37,8 +37,8 @@ def main():
             p1.memorizar(estado, acao_p1, recompensa_p1, proximo_estado, fim)
             p2.memorizar(estado, acao_p2, recompensa_p2, proximo_estado, fim)
             estado = proximo_estado
-        mse_p1 = p1.replay(t_batch)
-        mse_p2 = p2.replay(t_batch)
+        menor_mse_p1, maior_mse_p1 = p1.replay(t_batch)
+        menor_mse_p2, maior_mse_p2 = p2.replay(t_batch)
 
         if ep % c_save == 0:
             p1.save("modelo_p1.weights.h5")
@@ -47,7 +47,7 @@ def main():
             p1.update_alvo()
             p2.update_alvo()
 
-        print("Episodio {} : \t\t P1 = {} \t\t P2 = {}".format(ep, mse_p1, mse_p2))
+        print("Episodio {} : \t\t P1 = - {} \t + {} \t\t P2 = - {} \t + {}".format(ep, menor_mse_p1, maior_mse_p1, menor_mse_p2, maior_mse_p2))
         
 
 if __name__ == "__main__":
