@@ -1,5 +1,6 @@
 import math
 import random
+import numpy as np
 from enum import Enum, auto
 
 
@@ -40,16 +41,16 @@ class Pong:
             self.ball_pos[0] -= self.bounds[0] / 4.0
 
     def state(self) -> list:
-        return [
+        return np.array([
             self.ball_pos[0],
             self.ball_pos[1],
             self.ball_vel[0],
             self.ball_vel[1],
             self.p1_pos,
             self.p2_pos,
-        ]
+        ])
 
-    def step(self, p1, p2) -> (StepCondition, list):
+    def step(self, p1, p2) -> StepCondition:
         if self.condition == StepCondition.Player1Score or self.condition == StepCondition.Player2Score:
             self.set_random_ball()
         else:
@@ -70,11 +71,11 @@ class Pong:
                 ang = hit_rel_pos*2.0*self.reflect_angle - self.reflect_angle
                 self.ball_vel = [math.cos(ang), math.sin(ang)]
                 self.condition = StepCondition.Player1Hit
-                return self.condition, self.state()
+                return self.condition
             else:
                 self.p2_score += 1
                 self.condition = StepCondition.Player2Score
-                return self.condition, self.state()
+                return self.condition
 
         if self.ball_vel[0] > 0.0 and self.ball_pos[0] + self.ball_radius >= self.bounds[0]:
             self.ball_pos[0] = self.bounds[0] - self.ball_radius
@@ -85,11 +86,11 @@ class Pong:
                 ang = hit_rel_pos*2.0*self.reflect_angle - self.reflect_angle
                 self.ball_vel = [-math.cos(ang), math.sin(ang)]
                 self.condition = StepCondition.Player2Hit
-                return self.condition, self.state()
+                return self.condition
             else:
                 self.p1_score += 1
                 self.condition = StepCondition.Player1Score
-                return self.condition, self.state()
+                return self.condition
 
         if self.ball_vel[1] < 0.0 and self.ball_pos[1] < 0.0:
             self.ball_pos[1] = 0.0
@@ -99,4 +100,4 @@ class Pong:
             self.ball_vel[1] *= -1.0
 
         self.condition = StepCondition.Continue
-        return self.condition, self.state()
+        return self.condition
