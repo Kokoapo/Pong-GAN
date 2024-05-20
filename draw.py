@@ -29,16 +29,8 @@ def main():
         if keys[pg.K_q] or keys[pg.K_ESCAPE]:
             running = False
 
-        p1 = 0
-        p2 = 0
-        if keys[pg.K_w]:
-            p1 -= 1
-        if keys[pg.K_s]:
-            p1 += 1
-        if keys[pg.K_UP] or keys[pg.K_k]:
-            p2 -= 1
-        if keys[pg.K_DOWN] or keys[pg.K_j]:
-            p2 += 1
+        p1 = -keys[pg.K_w] + keys[pg.K_s]
+        p2 = -keys[pg.K_k] + keys[pg.K_j]
 
         condition = pong.step(p1, p2)
 
