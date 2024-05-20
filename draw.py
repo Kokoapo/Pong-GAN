@@ -1,6 +1,7 @@
 import sys
 import pygame as pg
 import pygame.freetype
+from rede_neural import DeepQNetwork
 from pong import Pong, StepCondition
 
 
@@ -11,13 +12,21 @@ WHITE = pg.Color(255, 255, 255)
 PAD_WIDTH = 5
 
 
-def main():
+def main(p1_use_ai, p2_use_ai):
     pg.init()
     pygame.display.set_caption("Pong!")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
     clock = pg.time.Clock()
     pong = Pong(WIDTH, HEIGHT)
     font = pg.freetype.Font("./F77MinecraftRegular-0VYv.ttf", 24)
+
+    if p1_use_ai:
+        p1_model = DeepQNetwork((6,), 3)
+        p1_model.load("modelo_p1.weights.h5")
+
+    if p2_use_ai:
+        p2_model = DeepQNetwork((6,), 3)
+        p2_model.load("modelo_p2.weights.h5")
 
     running = True
     while running:
@@ -29,10 +38,18 @@ def main():
         if keys[pg.K_q] or keys[pg.K_ESCAPE]:
             running = False
 
-        p1 = -keys[pg.K_w] + keys[pg.K_s]
-        p2 = -keys[pg.K_k] + keys[pg.K_j]
+        state = pong.state()
+        if p1_use_ai:
+            p1_action = p1_model.agir(state) - 1
+        else:
+            p1_action = -keys[pg.K_w] + keys[pg.K_s]
 
-        condition = pong.step(p1, p2)
+        if p2_use_ai:
+            p2_action = p2_model.agir(state) - 1
+        else:
+            p2_action = -keys[pg.K_k] + keys[pg.K_j]
+
+        condition = pong.step(p1_action, p2_action)
 
         screen.fill(BLACK)
         # elementos do game
@@ -62,4 +79,28 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    msg = """\
+Modo de Jogo:\n\
+(1) CPU vs CPU\n\
+(2) CPU vs P2\n\
+(3) P1 vs CPU\n\
+(4) P1 vs P2\n\
+> \
+"""
+    match input(msg):
+        case "1":
+            p1_use_ai = True
+            p2_use_ai = True
+        case "2":
+            p1_use_ai = True
+            p2_use_ai = False
+        case "3":
+            p1_use_ai = False
+            p2_use_ai = True
+        case "4":
+            p1_use_ai = False
+            p2_use_ai = False
+        case _:
+            p1_use_ai = True
+            p2_use_ai = True
+    main(p1_use_ai, p2_use_ai)
