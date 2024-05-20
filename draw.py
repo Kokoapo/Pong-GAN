@@ -29,16 +29,18 @@ def main():
         if keys[pg.K_q] or keys[pg.K_ESCAPE]:
             running = False
 
+        p1 = 0
+        p2 = 0
         if keys[pg.K_w]:
-            pong.play1(-1)
+            p1 -= 1
         if keys[pg.K_s]:
-            pong.play1(1)
+            p1 += 1
         if keys[pg.K_UP] or keys[pg.K_k]:
-            pong.play2(-1)
+            p2 -= 1
         if keys[pg.K_DOWN] or keys[pg.K_j]:
-            pong.play2(1)
+            p2 += 1
 
-        condition = pong.step()
+        condition, _ = pong.step(p1, p2)
 
         screen.fill(BLACK)
         # elementos do game

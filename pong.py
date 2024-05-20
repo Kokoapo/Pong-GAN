@@ -39,20 +39,27 @@ class Pong:
         else:
             self.ball_pos[0] -= self.bounds[0] / 4.0
 
-    def play1(self, up_down):
-        self.p1_pos += up_down * self.pad_speed
-        self.p1_pos = max(0, min(self.p1_pos, self.bounds[1] - self.pad_size))
+    def state(self) -> list:
+        return [
+            self.ball_pos[0],
+            self.ball_pos[1],
+            self.ball_vel[0],
+            self.ball_vel[1],
+            self.p1_pos,
+            self.p2_pos,
+        ]
 
-    def play2(self, up_down):
-        self.p2_pos += up_down * self.pad_speed
-        self.p2_pos = max(0, min(self.p2_pos, self.bounds[1] - self.pad_size))
-
-    def step(self) -> StepCondition:
+    def step(self, p1, p2) -> (StepCondition, list):
         if self.condition == StepCondition.Player1Score or self.condition == StepCondition.Player2Score:
             self.set_random_ball()
         else:
             self.ball_pos[0] += self.ball_vel[0] * self.ball_speed
             self.ball_pos[1] += self.ball_vel[1] * self.ball_speed
+
+        self.p1_pos += p1 * self.pad_speed
+        self.p1_pos = max(0, min(self.p1_pos, self.bounds[1] - self.pad_size))
+        self.p2_pos += p2 * self.pad_speed
+        self.p2_pos = max(0, min(self.p2_pos, self.bounds[1] - self.pad_size))
 
         if self.ball_vel[0] < 0.0 and self.ball_pos[0] <= 0.0:
             self.ball_pos[0] = 0.0
@@ -63,11 +70,11 @@ class Pong:
                 ang = hit_rel_pos*2.0*self.reflect_angle - self.reflect_angle
                 self.ball_vel = [math.cos(ang), math.sin(ang)]
                 self.condition = StepCondition.Player1Hit
-                return self.condition
+                return self.condition, self.state()
             else:
                 self.p2_score += 1
                 self.condition = StepCondition.Player2Score
-                return self.condition
+                return self.condition, self.state()
 
         if self.ball_vel[0] > 0.0 and self.ball_pos[0] + self.ball_radius >= self.bounds[0]:
             self.ball_pos[0] = self.bounds[0] - self.ball_radius
@@ -78,11 +85,11 @@ class Pong:
                 ang = hit_rel_pos*2.0*self.reflect_angle - self.reflect_angle
                 self.ball_vel = [-math.cos(ang), math.sin(ang)]
                 self.condition = StepCondition.Player2Hit
-                return self.condition
+                return self.condition, self.state()
             else:
                 self.p1_score += 1
                 self.condition = StepCondition.Player1Score
-                return self.condition
+                return self.condition, self.state()
 
         if self.ball_vel[1] < 0.0 and self.ball_pos[1] < 0.0:
             self.ball_pos[1] = 0.0
@@ -92,4 +99,4 @@ class Pong:
             self.ball_vel[1] *= -1.0
 
         self.condition = StepCondition.Continue
-        return self.condition
+        return self.condition, self.state()
