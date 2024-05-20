@@ -40,7 +40,7 @@ def main():
         if keys[pg.K_DOWN] or keys[pg.K_j]:
             p2 += 1
 
-        condition, _ = pong.step(p1, p2)
+        condition = pong.step(p1, p2)
 
         screen.fill(BLACK)
         # elementos do game
