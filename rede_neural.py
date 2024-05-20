@@ -37,7 +37,7 @@ class DeepQNetwork:
         if np.random.rand() <= self.epsilon:
             return random.randrange(self.n_saidas)
         q_values = self.modelo_main.predict(estado, verbose=0)
-        return np.argmax(q_values[0])-1
+        return np.argmax(q_values[0])
 
     def replay(self, t_batch):
         minibatch = random.sample(self.memoria, t_batch)

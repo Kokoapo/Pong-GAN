@@ -40,15 +40,15 @@ class Pong:
         else:
             self.ball_pos[0] -= self.bounds[0] / 4.0
 
-    def state(self) -> np.array:
-        return np.array([
+    def state(self):
+        return np.array([[
             self.ball_pos[0],
             self.ball_pos[1],
             self.ball_vel[0],
             self.ball_vel[1],
             self.p1_pos,
             self.p2_pos,
-        ])
+        ]])
 
     def step(self, p1, p2) -> StepCondition:
         if self.condition == StepCondition.Player1Score or self.condition == StepCondition.Player2Score:
