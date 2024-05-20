@@ -12,8 +12,6 @@ class DeepQNetwork:
 
         self.gamma = 0.95   # discount rate
         self.epsilon = 1.0  # exploration rate
-        self.epsilon_min = 0.01
-        self.epsilon_decay = 0.995
         self.alpha = 0.001  # learning rate
 
         self.modelo_main = self.criar_modelo()
@@ -26,6 +24,9 @@ class DeepQNetwork:
         modelo.add(keras.layers.Dense(self.n_saidas, activation='linear'))
         modelo.compile(loss='mse', optimizer=tf.keras.optimizers.Adam(), metrics=['mse'])
         return modelo
+    
+    def update_epsilon(self, decay):
+        self.epsilon -= decay
 
     def update_alvo(self):
         self.modelo_alvo.set_weights(self.modelo_main.get_weights())
@@ -57,8 +58,6 @@ class DeepQNetwork:
             elif history.history['mse'][0] < menor_loss:
                 menor_loss = history.history['mse'][0]
 
-            if self.epsilon > self.epsilon_min:
-                self.epsilon *= self.epsilon_decay
         return menor_loss, maior_loss
 
     def load(self, name):
