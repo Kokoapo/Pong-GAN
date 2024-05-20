@@ -26,7 +26,8 @@ class DeepQNetwork:
         return modelo
     
     def update_epsilon(self, decay):
-        self.epsilon -= decay
+        if self.epsilon > 0.01:
+            self.epsilon -= decay
 
     def update_alvo(self):
         self.modelo_alvo.set_weights(self.modelo_main.get_weights())
