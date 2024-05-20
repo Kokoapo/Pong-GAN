@@ -40,7 +40,7 @@ class Pong:
         else:
             self.ball_pos[0] -= self.bounds[0] / 4.0
 
-    def state(self) -> list:
+    def state(self) -> np.array:
         return np.array([
             self.ball_pos[0],
             self.ball_pos[1],
