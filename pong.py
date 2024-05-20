@@ -21,20 +21,23 @@ class Pong:
         self.p2_score = 0
         self.ball_speed = width / 110.0
         self.ball_radius = width / 100.0
-        self.pad_size = height / 6
-        self.pad_speed = height / 60.0
+        self.pad_size = height / 8.0
+        self.pad_speed = height / 120.0
         self.set_random_ball()
         self.condition = StepCondition.Continue
+
+    def reset(self):
+        self.__init__(self.bounds[0], self.bounds[1])
 
     def set_random_ball(self):
         initial_angle = random.uniform(-math.pi / 4, math.pi / 4)
         self.ball_pos = [self.bounds[0] / 2, self.bounds[1] / 2]
         self.ball_vel = [math.cos(initial_angle), math.sin(initial_angle)]
         if random.getrandbits(1):
-            self.ball_pos[0] += self.bounds[0] / 6.0
+            self.ball_pos[0] += self.bounds[0] / 4.0
             self.ball_vel[0] *= -1.0
         else:
-            self.ball_pos[0] -= self.bounds[0] / 6.0
+            self.ball_pos[0] -= self.bounds[0] / 4.0
 
     def play1(self, up_down):
         self.p1_pos += up_down * self.pad_speed
