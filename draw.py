@@ -1,4 +1,7 @@
 import sys
+import os
+os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 import pygame as pg
 import pygame.freetype
 from rede_neural import DeepQNetwork
