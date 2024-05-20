@@ -4,7 +4,7 @@ os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 import pygame as pg
 import pygame.freetype
-from rede_neural import DeepQNetwork
+DeepQNetwork = None
 from pong import Pong, StepCondition
 
 
@@ -106,4 +106,6 @@ Modo de Jogo:\n\
         case _:
             p1_use_ai = True
             p2_use_ai = True
+    if p1_use_ai or p2_use_ai:
+        DeepQNetwork = __import__("rede_neural").DeepQNetwork
     main(p1_use_ai, p2_use_ai)
