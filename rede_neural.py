@@ -6,6 +6,7 @@ from collections import deque
 
 class DeepQNetwork:
     def __init__(self, n_entradas, n_saidas):
+        print(n_entradas)
         self.n_entradas = n_entradas
         self.n_saidas = n_saidas
         self.memoria = deque(maxlen=2000)
@@ -36,6 +37,7 @@ class DeepQNetwork:
         self.memoria.append((estado_atual, acao, recompensa, proximo_estado, fim))
 
     def agir(self, estado):
+        print(estado)
         if random.random() < self.epsilon:
             return random.randint(0, self.n_saidas-1)
         q_values = self.modelo_main.predict(estado, verbose=0)[0]

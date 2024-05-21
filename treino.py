@@ -4,10 +4,10 @@ from pong import Pong, StepCondition
 
 def main():
     n_episodios = 1000
-    epsilon_decay = 0.99
-    c_save = 25
+    epsilon_decay = (1-0.1)/n_episodios
+    c_save = 50
     c_copy = 100
-    t_batch = 32
+    t_batch = 20
 
     p1 = DeepQNetwork((6,), 3)
     p2 = DeepQNetwork((6,), 3)
@@ -54,8 +54,8 @@ def main():
         p2.update_epsilon(epsilon_decay)
 
         if ep % c_save == 0:
-            p1.save("modelo_p1.weights.h5")
-            p2.save("modelo_p2.weights.h5")
+            p1.save("savesp2/modelo_{}.weights.h5".format(ep))
+            p2.save("savesp1/modelo_{}.weights.h5".format(ep))
 
         tempo_fim = time.time() - tempo_init
         print("Episodio {} : \t\t P1 - {:.10f} \t\t\t P2 - {:.10f} \t\t\t Tempo : {:.5f}".format(ep, media_loss_p1, media_loss_p2, tempo_fim))
