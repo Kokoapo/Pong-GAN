@@ -20,9 +20,9 @@ class DeepQNetwork:
     def criar_modelo(self):
         modelo = keras.models.Sequential()
         modelo.add(keras.layers.InputLayer(shape=self.n_entradas))
-        modelo.add(keras.layers.Dense(256, activation='relu'))
-        modelo.add(keras.layers.Dense(256, activation='relu'))
         modelo.add(keras.layers.Dense(128, activation='relu'))
+        modelo.add(keras.layers.Dense(64, activation='relu'))
+        modelo.add(keras.layers.Dense(64, activation='relu'))
         modelo.add(keras.layers.Dense(self.n_saidas, activation='linear'))
         modelo.compile(loss='mse', optimizer=tf.keras.optimizers.Adam(), metrics=['mse'])
         return modelo
