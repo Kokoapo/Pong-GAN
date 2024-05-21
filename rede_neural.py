@@ -36,10 +36,10 @@ class DeepQNetwork:
         self.memoria.append((estado_atual, acao, recompensa, proximo_estado, fim))
 
     def agir(self, estado):
-        if np.random.rand() <= self.epsilon:
-            return random.randrange(self.n_saidas)
-        q_values = self.modelo_main.predict(estado, verbose=0)
-        return np.argmax(q_values[0])
+        if random.random() < self.epsilon:
+            return random.randint(0, self.n_saidas-1)
+        q_values = self.modelo_main.predict(estado, verbose=0)[0]
+        return np.argmax(q_values)
 
     def replay(self, t_batch):
         minibatch = random.sample(self.memoria, t_batch)
