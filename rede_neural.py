@@ -1,6 +1,6 @@
 import numpy as np;
 import tensorflow as tf;
-from tensorflow import keras;
+import keras;
 import random;
 from collections import deque
 
@@ -20,11 +20,9 @@ class DeepQNetwork:
     def criar_modelo(self):
         modelo = keras.models.Sequential()
         modelo.add(keras.layers.InputLayer(shape=self.n_entradas))
-        modelo.add(keras.layers.Dense(128, activation='relu'))
-        modelo.add(keras.layers.Dense(64, activation='relu'))
-        modelo.add(keras.layers.Dense(64, activation='relu'))
+        modelo.add(keras.layers.Dense(512, activation='relu'))
         modelo.add(keras.layers.Dense(self.n_saidas, activation='linear'))
-        modelo.compile(loss='mse', optimizer=tf.keras.optimizers.Adam(), metrics=['mse'])
+        modelo.compile(loss='mse', optimizer=keras.optimizers.Adam(learning_rate=self.alpha), metrics=['mse'])
         return modelo
     
     def update_epsilon(self, decay):
