@@ -26,7 +26,7 @@ class DeepQNetwork:
         return modelo
     
     def update_epsilon(self, decay):
-        if self.epsilon > 0.01:
+        if self.epsilon > 0.0001:
             self.epsilon -= decay
 
     def update_alvo(self):
