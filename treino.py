@@ -3,9 +3,10 @@ from rede_neural import DeepQNetwork
 from pong import Pong, StepCondition
 
 def main():
-    n_episodios = 1000
+    n_episodios = 3000
     epsilon_decay = 1/n_episodios
-    c_save = 50
+    c_save = 25
+    c_copy = 50
     t_batch = 32
 
     p1 = DeepQNetwork((6,), 3)
@@ -27,25 +28,29 @@ def main():
             recompensa_p1 = recompensa_p2 = 0
             match condition:
                 case StepCondition.Player1Hit:
-                    recompensa_p1 = 5
+                    recompensa_p1 = 20
                 case StepCondition.Player2Hit:
-                    recompensa_p2 = 5
+                    recompensa_p2 = 20
                 case StepCondition.Player1Score:
-                    recompensa_p1 = 10
-                    recompensa_p2 = -10
+                    recompensa_p1 = 100
+                    recompensa_p2 = -100
                     fim = True
                 case StepCondition.Player2Score:
-                    recompensa_p2 = 10
-                    recompensa_p1 = -10
+                    recompensa_p2 = 100
+                    recompensa_p1 = -100
                     fim = True
             
             p1.memorizar(estado, acao_p1, recompensa_p1, proximo_estado, fim)
             p2.memorizar(estado, acao_p2, recompensa_p2, proximo_estado, fim)
             estado = proximo_estado
-        p1.update_alvo()
-        p2.update_alvo()
-        menor_mse_p1, maior_mse_p1 = p1.replay(t_batch)
-        menor_mse_p2, maior_mse_p2 = p2.replay(t_batch)
+        tempo_fim = time.time() - tempo_init
+        
+        if ep % c_copy == 0:
+            p1.update_alvo()
+            p2.update_alvo()
+        
+        media_loss_p1 = p1.replay(t_batch)
+        media_loss_p2 = p2.replay(t_batch)
 
         p1.update_epsilon(epsilon_decay)
         p2.update_epsilon(epsilon_decay)
@@ -54,8 +59,7 @@ def main():
             p1.save("modelo_p1.weights.h5")
             p2.save("modelo_p2.weights.h5")
 
-        tempo_fim = time.time() - tempo_init
-        print("Episodio {} : \t\t P1 - {} \t + {} \t\t P2 - {} \t + {} \t\t Tempo : {}".format(ep, menor_mse_p1, maior_mse_p1, menor_mse_p2, maior_mse_p2, tempo_fim))
+        print("Episodio {} : \t\t P1 - {} \t\t\t P2 - {} \t\t\t Tempo : {}".format(ep, media_loss_p1, media_loss_p2, tempo_fim))
         
 
 if __name__ == "__main__":
