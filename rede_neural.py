@@ -1,6 +1,6 @@
 import numpy as np;
 import tensorflow as tf;
-from tensorflow import keras;
+import keras;
 import random;
 from collections import deque
 
@@ -19,12 +19,14 @@ class DeepQNetwork:
 
     def criar_modelo(self):
         modelo = keras.models.Sequential()
-        modelo.add(keras.layers.InputLayer(shape=self.n_entradas))
-        modelo.add(keras.layers.Dense(128, activation='relu'))
-        modelo.add(keras.layers.Dense(64, activation='relu'))
-        modelo.add(keras.layers.Dense(64, activation='relu'))
-        modelo.add(keras.layers.Dense(self.n_saidas, activation='linear'))
-        modelo.compile(loss='mse', optimizer=tf.keras.optimizers.Adam(), metrics=['mse'])
+        modelo.add(keras.layers.Conv2D(32, kernel_size= (8, 8), strides= (4, 4), border_mode='same', activation='relu', init='uniform', input_shape=self.n_entradas))
+        modelo.add(keras.layers.MaxPooling2D(pool_size= (2, 2)))
+        modelo.add(keras.layers.Conv2D(64, kernel_size= (2, 2), strides= (2, 2), border_mode='same', activation='relu', init='uniform'))
+        modelo.add(keras.layers.Conv2D(64, kernel_size= (3, 3), strides= (1, 1), border_mode='same', activation='relu', init='uniform'))
+        modelo.add(keras.layers.Flatten())
+        modelo.add(keras.layers.Dense(256, init='uniform', activation='relu'))
+        modelo.add(keras.layers.Dense(self.n_saidas, init='uniform', activation='linear'))
+        modelo.compile(loss='mse', optimizer=keras.optimizers.Adam(), metrics=['mse'])
         return modelo
     
     def update_epsilon(self, decay):
