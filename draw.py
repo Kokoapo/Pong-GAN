@@ -37,7 +37,7 @@ def main(p1_use_ai, p2_use_ai):
     p2_action = 0
 
     frame = 0
-    action_interval = 4
+    action_interval = 8
     running = True
     while running:
         for event in pg.event.get():
@@ -52,12 +52,12 @@ def main(p1_use_ai, p2_use_ai):
 
         if not p1_use_ai:
             p1_action = -keys[pg.K_w] + keys[pg.K_s]
-        elif pong.ball_vel[0] < 0 and frame % action_interval == 0:
+        elif frame % action_interval == 0:
             p1_action = p1_model.agir(state) - 1
 
         if not p2_use_ai:
             p2_action = -keys[pg.K_k] + keys[pg.K_j]
-        elif pong.ball_vel[0] > 0 and frame % action_interval == 0:
+        elif (frame + action_interval//2) % action_interval == 0:
             p2_action = p2_model.agir(state) - 1
 
         condition = pong.step(p1_action, p2_action)
