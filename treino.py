@@ -4,10 +4,10 @@ from pong import Pong, StepCondition
 
 def main():
     n_episodios = 7000
-    epsilon_decay = (1-0.1)/n_episodios
+    epsilon_decay = 1/n_episodios
     c_save = 50
     c_copy = 100
-    t_batch = 20
+    t_batch = 32
 
     p1 = DeepQNetwork((6,), 3)
     p2 = DeepQNetwork((6,), 3)
@@ -28,16 +28,16 @@ def main():
             recompensa_p1 = recompensa_p2 = 0
             match condition:
                 case StepCondition.Player1Hit:
-                    recompensa_p1 = 100
-                case StepCondition.Player2Hit:
-                    recompensa_p2 = 100
-                case StepCondition.Player1Score:
                     recompensa_p1 = 50
-                    recompensa_p2 = -50
+                case StepCondition.Player2Hit:
+                    recompensa_p2 = 50
+                case StepCondition.Player1Score:
+                    recompensa_p1 = 150
+                    recompensa_p2 = 0
                     fim = True
                 case StepCondition.Player2Score:
-                    recompensa_p2 = 50
-                    recompensa_p1 = -50
+                    recompensa_p2 = 150
+                    recompensa_p1 = 0
                     fim = True
             
             p1.memorizar(estado, acao_p1, recompensa_p1, proximo_estado, fim)

@@ -8,11 +8,11 @@ class DeepQNetwork:
     def __init__(self, n_entradas, n_saidas):
         self.n_entradas = n_entradas
         self.n_saidas = n_saidas
-        self.memoria = deque(maxlen=2000)
+        self.memoria = deque(maxlen=8000)
 
-        self.gamma = 0.95   # discount rate
+        self.gamma = 0.99   # discount rate
         self.epsilon = 1.0  # exploration rate
-        self.alpha = 0.001  # learning rate
+        self.alpha = 0.01  # learning rate
 
         self.modelo_main = self.criar_modelo()
         self.modelo_alvo = self.criar_modelo()
