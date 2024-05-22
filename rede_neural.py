@@ -6,7 +6,6 @@ from collections import deque
 
 class DeepQNetwork:
     def __init__(self, n_entradas, n_saidas):
-        print(n_entradas)
         self.n_entradas = n_entradas
         self.n_saidas = n_saidas
         self.memoria = deque(maxlen=2000)
@@ -22,6 +21,8 @@ class DeepQNetwork:
         modelo = keras.models.Sequential()
         modelo.add(keras.layers.InputLayer(shape=self.n_entradas))
         modelo.add(keras.layers.Dense(512, activation='relu'))
+        modelo.add(keras.layers.Dense(256, activation='relu'))
+        modelo.add(keras.layers.Dense(256, activation='relu'))
         modelo.add(keras.layers.Dense(self.n_saidas, activation='linear'))
         modelo.compile(loss='mse', optimizer=keras.optimizers.Adam(learning_rate=self.alpha), metrics=['mse'])
         return modelo
@@ -34,10 +35,15 @@ class DeepQNetwork:
         self.modelo_alvo.set_weights(self.modelo_main.get_weights())
 
     def memorizar(self, estado_atual, acao, recompensa, proximo_estado, fim):
+        estado_atual = self.reshape_estado(estado_atual)
+        proximo_estado = self.reshape_estado(proximo_estado)
         self.memoria.append((estado_atual, acao, recompensa, proximo_estado, fim))
 
+    def reshape_estado(self, estado):
+        return np.reshape(estado, [1] + list(self.n_entradas))
+
     def agir(self, estado):
-        print(estado)
+        estado = self.reshape_estado(estado)
         if random.random() < self.epsilon:
             return random.randint(0, self.n_saidas-1)
         q_values = self.modelo_main.predict(estado, verbose=0)[0]

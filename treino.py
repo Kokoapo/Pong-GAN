@@ -3,7 +3,7 @@ from rede_neural import DeepQNetwork
 from pong import Pong, StepCondition
 
 def main():
-    n_episodios = 1000
+    n_episodios = 7000
     epsilon_decay = (1-0.1)/n_episodios
     c_save = 50
     c_copy = 100
