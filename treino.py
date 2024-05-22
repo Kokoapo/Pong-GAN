@@ -5,7 +5,7 @@ from pong import Pong, StepCondition
 def main():
     n_episodios = 7000
     epsilon_decay = 1/n_episodios
-    c_save = 50
+    c_save = 250
     c_copy = 100
     t_batch = 32
 
